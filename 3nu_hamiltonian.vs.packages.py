@@ -25,7 +25,7 @@ from scipy.linalg import expm
 exp = "DUNE"
 L = 1285                               # km
 E_range = np.linspace(0.1, 10, 500)     # GeV
-# Additional matter potential term
+# Matter parameters
 G_F = 1.1663787e-5     # GeV^-2
 rho = 2.825            # g/cm^3
 Ye = 0.5
@@ -50,18 +50,25 @@ U = np.array([
 ], dtype=complex)
 
 #I.2.2 3nu_matter_evolutor_NH
-def P_3nu_evolutor(L, E, U, delta_m2, rho, alpha, beta): 
+def P_3nu_evolutor_expm(L, E, U, delta_m2, rho, alpha, beta): 
 	hbarc = 197.3269804e-9     # eV.m
 	L_natural_unit = (L * 1e3) / hbarc   # eV^-1
-	E_eV = E * 1e9
+	#L_natural_unit = L * 5.067730718e9   # # km -> 1e3 m -> 1e3/hbarc eV^-1
+	E_eV = E * 1e9   # eV
+	# Inverted ordering
+	#dm21, dm31 = delta_m2
+	# Here dm31 is NEGATIVE (e.g. -2.498e-3 eV^2)
+	#m2sq = dm31 + dm21   # shifted by solar splitting
+	#dm2 = [dm31, m2sq, 0]  # m3^2 = 0 reference
 	dm21, dm31 = delta_m2
 	dm32 = dm31 - dm21
-	dm2 = [0, dm21, dm31]  # dm11^2=0 reference
+	dm2 = [0, dm21, dm31]  # m1^2=0 reference
+	# Hamiltonian
 	H_mass = np.diag([0, dm21/(2*E_eV), dm31/(2*E_eV)])
 	H_flavor = U @ H_mass @ U.conj().T
     # Additional potential term
 	V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV
-	#V = np.sqrt(2) * G_F * 5.966551932e-9   # for approx using proton mass
+	#V = np.sqrt(2) * rho * Ye * 5.370183934e-14 # GF*Na*7.645373e-33eV
 	V_matter = np.diag([V, 0, 0])
 	H_flavor += V_matter
     # Time evolution
@@ -78,11 +85,46 @@ def P_3nu_evolutor(L, E, U, delta_m2, rho, alpha, beta):
 	
 	return probability
 
+# Eigh
+def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta): 
+	hbarc = 197.3269804e-9     # eV.m
+	L_natural_unit = (L * 1e3) / hbarc   # eV^-1
+	#L_natural_unit = L * 5.067730718e9   # km -> 1e3 m -> 1e3/hbarc eV^-1
+	E_eV = E * 1e9   # eV
+	dm21, dm31 = delta_m2
+	dm32 = dm31 - dm21
+	dm2 = [0, dm21, dm31]  # m1^2=0 reference
+	 # Hamiltonian
+	H_mass = np.diag([0, dm21/(2*E_eV), dm31/(2*E_eV)])
+	H_flavor = U @ H_mass @ U.conj().T
+    # Additional potential term
+	V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV
+	#V = np.sqrt(2) * rho * Ye * 5.370183934e-14 # GF*Na*7.645373e-33eV
+	V_matter = np.diag([V, 0, 0])
+	H_flavor += V_matter
+    # Eigen-decomposition
+	evals, evecs = np.linalg.eigh(H_flavor)
+    # Time evolution 
+	phases = np.exp(-1j * evals * L_natural_unit)
+	U_t = evecs @ np.diag(phases) @ evecs.conj().T
+    # Initial and final flavor states
+	psi_alpha = np.zeros(3, dtype=complex)
+	psi_alpha[alpha] = 1
+	psi_beta = np.zeros(3, dtype=complex)
+	psi_beta[beta] = 1
+    # Probability
+	psi_t = U_t @ psi_alpha
+	amplitude = np.vdot(psi_beta, psi_t)
+	probability = np.abs(amplitude)**2
+	
+	return probability
+
+
 # NuFast
-#eVsqkm_to_GeV_over4 = 1e-9 / 1.97327e-7 * 1e3 / 4
-#YerhoE2a = 1.52e-4
-eVsqkm_to_GeV_over4 = (1e3 / 197.3269804e-9) / (4 * 1e9)
-YerhoE2a = 1.51891739e-4 
+#eVsqkm_to_GeV_over4 = (1e3 / 197.3269804e-9) / (4 * 1e9)
+#YerhoE2a = 1.51891739e-4 
+eVsqkm_to_GeV_over4 = 1e-9 / 1.97327e-7 * 1e3 / 4
+YerhoE2a = 1.52e-4
 # --------------------------------------------------------------------- #
 # Set the number of Newton-Raphson iterations which sets the precision. #
 # 0 is close to the single precision limit and is better than DUNE/HK   #
@@ -401,7 +443,6 @@ def Pee_analytical(L, E, theta12, theta13, Dmsq21, Dmsq31):
 	
 	return 1 - term21 - term31 - term32
 
-Pee_ana = [Pee_analytical(L, E, theta12, theta13, Dmsq21, Dmsq31) for E in E_range]
 
 P_nuexact_matter = np.array([oscprob_nuexact_matter(L, E, Dmsq21, Dmsq31, U) for E in E_range])
 P_nuexact_vacuum = np.array([oscprob_nuexact_vacuum(L, E, Dmsq21, Dmsq31, U) for E in E_range])
@@ -409,20 +450,24 @@ P_nuexact_vacuum = np.array([oscprob_nuexact_vacuum(L, E, Dmsq21, Dmsq31, U) for
 P_nufast_matter = np.array([Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp, Dmsq21, Dmsq31, L, E, rho, Ye, N_Newton) for E in E_range])
 P_nufast_vacuum = np.array([Probability_Vacuum_LBL(s12sq, s13sq, s23sq, delta_cp, Dmsq21, Dmsq31, L, E) for E in E_range])
 
-P_hamiltonian = np.array([P_3nu_evolutor(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0) for E in E_range])
+P_hamiltonian_expm = np.array([P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0) for E in E_range])
+P_hamiltonian_eigh = np.array([P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0) for E in E_range])
+
+Pee_ana = [Pee_analytical(L, E, theta12, theta13, Dmsq21, Dmsq31) for E in E_range] 
 
 # Plotting
 exp = "DUNE"
 plt.figure(figsize=(12,5))
 #plt.plot(E_range, Pee_ana, label=r'$P(\nu_e \to \nu_e) (Analytical)$', color='blue', linestyle='-', linewidth=2)
-#plt.plot(E_range, P_nuexact_matter, label=r'$P(\nu_\mu \to \nu_e) (NuExact-matter)$', color='red', linestyle='-', linewidth=2)
-#plt.plot(E_range, P_nuexact_vacuum, label=r'$P(\nu_\mu \to \nu_e) (NuExact-vacuum)$', color='red', linestyle=':', linewidth=2)
+plt.plot(E_range, P_nuexact_matter, label=r'$P(\nu_\mu \to \nu_e) (NuExact-matter)$', color='red', linestyle='-', linewidth=2)
+plt.plot(E_range, P_nuexact_vacuum, label=r'$P(\nu_\mu \to \nu_e) (NuExact-vacuum)$', color='red', linestyle=':', linewidth=2)
 plt.plot(E_range, P_nufast_matter, label=r'$P(\nu_\mu \to \nu_e) (NuFast-matter)$', color='yellow', linestyle='-', linewidth=2)
-#plt.plot(E_range, P_nufast_vacuum, label=r'$P(\nu_\mu \to \nu_e) (NuFast-vacuum)$', color='yellow', linestyle=':', linewidth=2)
-plt.plot(E_range, P_hamiltonian, label=r'$P(\nu_\mu \to \nu_e) (hamiltonian)$', color='green', linestyle='-', linewidth=2)
+plt.plot(E_range, P_nufast_vacuum, label=r'$P(\nu_\mu \to \nu_e) (NuFast-vacuum)$', color='yellow', linestyle=':', linewidth=2)
+plt.plot(E_range, P_hamiltonian_expm, label=r'$P(\nu_\mu \to \nu_e) (hamiltonian_expm)$', color='green', linestyle='-', linewidth=2)
+plt.plot(E_range, P_hamiltonian_eigh, label=r'$P(\nu_\mu \to \nu_e) (hamiltonian_eigh)$', color='blue', linestyle='-', linewidth=2)
 plt.xlabel(r'Neutrino Energy $E_\nu$ [GeV]')
 plt.ylabel('Probability')
-plt.title(f'P(numu2nue) at L={L} km ({exp}) in vacuum')
+plt.title(f'P(numu2nue) at L={L} km ({exp})')
 plt.grid(True)
 plt.ylim(0, 1.1)
 
@@ -448,12 +493,12 @@ plt.show()
 #print(f"Total probability deviation: {Pmu_e_3 + Pmu_tau_3 + Pmu_mu_3 - 1:.5e}") 
 
 # Absolute difference
-y1 = P_hamiltonian   
-y2 = P_nufast_matter   
+y1 = P_hamiltonian_expm   
+y2 = P_hamiltonian_eigh
 # Difference plot
 diff = y1 - y2
 plt.figure(figsize=(12,5))
-plt.title(f'Hamiltonian vs NuFast at L={L} km ({exp}) in matter')
+plt.title(f'Expm vs NuFast at L={L} km ({exp}) in matter (IO)')
 plt.xlabel(r'Neutrino Energy $E_\nu$ [GeV]')
 plt.ylabel(r'$\Delta P(\nu_\mu \to \nu_e)$')
 plt.plot(E_range, diff, label='Difference')
@@ -463,5 +508,50 @@ plt.show()
 # Unitarity test
 I = np.eye(U.shape[0])
 norm = np.linalg.norm(U.conj().T @ U - I, "fro")
-
 print(r'$U^\dagger U - I$: ', norm)
+
+# Running time investigation
+import time
+
+times_expm = []
+times_eigh = []
+times_nufast = []
+times_nuexact = []
+
+for E in E_range:
+    # Hamiltonian_expm
+    t0 = time.time()
+    P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
+    times_expm.append(time.time() - t0)
+    # Hamiltonian_eigh
+    t0 = time.time()
+    P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
+    times_eigh.append(time.time() - t0)
+    # NuFast
+    t0 = time.time()
+    Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp,
+                           Dmsq21, Dmsq31, L, E, rho, Ye, N_Newton)
+    times_nufast.append(time.time() - t0)
+    # NuExact 
+    t0 = time.time()
+    oscprob_nuexact_matter(L, E, Dmsq21, Dmsq31, U)
+    times_nuexact.append(time.time() - t0)
+
+times_expm = np.array(times_expm)
+times_eigh = np.array(times_eigh)
+times_nufast = np.array(times_nufast)
+times_nuexact = np.array(times_nuexact)
+
+# Plot
+plt.figure(figsize=(12,5))
+plt.plot(E_range, times_expm*1e3, label="Hamiltonian (expm)", color="#17becf")
+plt.plot(E_range, times_eigh*1e3, label="Hamiltonian (eigh)", color="#2ca02c")
+plt.plot(E_range, times_nufast*1e3, label="NuFast", color="#bcbd22")
+plt.plot(E_range, times_nuexact*1e3, label="NuExact", color="#ff7f0e")
+plt.xlabel(r"Neutrino energy $E_\nu$ [GeV]")
+plt.ylabel(r"Runtime per evaluation [$ms$]")
+plt.title(f"Runtime vs energy at L={L} km")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
