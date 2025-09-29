@@ -9,7 +9,7 @@ The program is fully written in Python 3, using standard modules that are availa
   ```bash
   pip install numpy scipy 
 
-## Structure
+### Structure
 The parameters can be changed at the start of the program.
 
 Different Hamiltonians and PMNS matrices are written in a separate function. One could call the function for any task in need.
