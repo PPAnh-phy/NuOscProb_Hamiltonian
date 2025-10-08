@@ -385,7 +385,7 @@ def Probability_Vacuum_LBL(s12sq, s13sq, s23sq, delta, Dmsq21, Dmsq31, L, E):
 
 ### NuExact
 import sys
-sys.path.append('D:/Documents/USTH/USTH/Internships/IFIRSE - Neutrino Physics/Code/NuOscProbExact-master/NuOscProbExact-master/src')
+sys.path.append('.../NuOscProbExact-master/NuOscProbExact-master/src')
 import oscprob3nu
 import hamiltonians3nu
 from globaldefs import *
@@ -556,3 +556,84 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
+# Unitarity test
+I = np.eye(U.shape[0])
+norm = np.linalg.norm(U.conj().T @ U - I, "fro")
+print(r'$U^\dagger U - I$: ', norm)
+
+# Running time investigation
+import time
+
+times_expm = []
+times_eigh = []
+times_nufast = []
+times_nuexact = []
+
+for E in E_range:
+    # Hamiltonian_expm
+    t0 = time.time()
+    P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
+    times_expm.append(time.time() - t0)
+    # Hamiltonian_eigh
+    t0 = time.time()
+    P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
+    times_eigh.append(time.time() - t0)
+    # NuFast
+    t0 = time.time()
+    Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp,
+                           Dmsq21, Dmsq31, L, E, rho, Ye, N_Newton)
+    times_nufast.append(time.time() - t0)
+    # NuExact 
+    t0 = time.time()
+    oscprob_nuexact_matter(L, E, Dmsq21, Dmsq31, U)
+    times_nuexact.append(time.time() - t0)
+
+times_expm = np.array(times_expm)
+times_eigh = np.array(times_eigh)
+times_nufast = np.array(times_nufast)
+times_nuexact = np.array(times_nuexact)
+
+# Plot
+plt.figure(figsize=(12,5))
+plt.plot(E_range, times_expm*1e3, label="Hamiltonian (expm)", color="#17becf")
+plt.plot(E_range, times_eigh*1e3, label="Hamiltonian (eigh)", color="#2ca02c")
+plt.plot(E_range, times_nufast*1e3, label="NuFast", color="#bcbd22")
+plt.plot(E_range, times_nuexact*1e3, label="NuExact", color="#ff7f0e")
+plt.xlabel(r"Neutrino energy $E_\nu$ [GeV]")
+plt.ylabel(r"Runtime per evaluation [$ms$]")
+plt.title(f"Runtime vs energy at L={L} km")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Benchmark parameters
+N = 5000   # number of evaluations per method
+E0 = 2.5   # GeV, representative energy
+
+print("The running time of:")
+# expm
+t0 = time.time()
+for _ in range(N):
+    P_3nu_evolutor_expm(L, E0, U, [Dmsq21, Dmsq31], rho, 1, 0)
+t1 = time.time()
+print(f"Hamiltonian (expm): {t1 - t0:.4f} s for {N} evals")
+# eigh
+t0 = time.time()
+for _ in range(N):
+    P_3nu_evolutor_eigh(L, E0, U, [Dmsq21, Dmsq31], rho, 1, 0)
+t1 = time.time()
+print(f"Hamiltonian (eigh): {t1 - t0:.4f} s for {N} evals")
+# NuFast
+t0 = time.time()
+for _ in range(N):
+    Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp,
+                           Dmsq21, Dmsq31, L, E0, rho, Ye, N_Newton)
+t1 = time.time()
+print(f"NuFast: {t1 - t0:.4f} s for {N} evals")
+# NuExact
+t0 = time.time()
+for _ in range(N):
+    oscprob_nuexact_matter(L, E0, Dmsq21, Dmsq31, U)
+t1 = time.time()
+print(f"NuExact: {t1 - t0:.4f} s for {N} evals")
