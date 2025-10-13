@@ -1,6 +1,6 @@
 # NuOscProb_Hamiltonian
 
-This package computes neutrino oscillation probability by the most fundamental approach, explicitly diagonalising the Hamiltonian using either the `expm` or `eigh` module. We aim to design a general program that can be applied to a wide range of problems with the highest precision, for the purpose of serving future experiments such as JUNO, DUNE, Hyper-K, etc. We examined our program vs analytical formulas and other approximate/exact packages such as *NuFast* and *NuOscProbsExact*. Both vacuum and matter effects are taken into account.
+We computes neutrino oscillation probability by the most fundamental approach, explicitly diagonalising the Hamiltonian. We aim to design a general program that can be applied to a wide range of problems with the highest precision, for the purpose of serving ongoing and underdeveloped experiments such as JUNO, DUNE, Hyper-K, etc. We examined our program vs analytical formulas and other approximate/exact packages. Both vacuum and matter effects are taken into account.
 
 ### Requirements
 The program is fully written in Python 3, using standard modules that are available on most Python installations.
