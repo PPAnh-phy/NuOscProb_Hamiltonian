@@ -124,22 +124,3 @@ def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta):
 I = np.eye(U.shape[0])
 norm = np.linalg.norm(U.conj().T @ U - I, "fro")
 print(r'$U^\dagger U - I$: ', norm)
-
-# Running time investigation
-import time
-
-times_expm = []
-times_eigh = []
-
-for E in E_range:
-    # Hamiltonian_expm
-    t0 = time.time()
-    P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
-    times_expm.append(time.time() - t0)
-    # Hamiltonian_eigh
-    t0 = time.time()
-    P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0)
-    times_eigh.append(time.time() - t0)
-
-times_expm = np.array(times_expm)
-times_eigh = np.array(times_eigh)
