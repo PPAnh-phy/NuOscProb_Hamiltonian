@@ -9,16 +9,16 @@ The program is fully written in Python 3, using standard modules that are availa
   ```bash
   pip install numpy scipy 
 
-### Structure
-## Inside the Study packages file:
+## Structure
+### Inside the Study packages file:
 * **PMNS**: define parameters (we used NuFit 6.0 best fit data), and compute the PMNS matrix.
 * **hamiltonian_vs_packages**: compute neutrino oscillation probability and compare between packages (NuFAST and NuExact)
 * **plot**: create plots of neutrino oscillation probability and differences between packages
 * **running_time**: compute running time between packages 
-* **Myglobaldefs**: my modifified parameters for more precise results of NuExact packages (modifications used for NuFAST are already included in the file 'hamiltonian_vs_packages')
+* **Myglobaldefs**: my modified parameters for more precise results of NuExact packages (modifications used for NuFAST are already included in the file 'hamiltonian_vs_packages')
 ---
 
-## Notes on Neutrino Oscillations
+### Notes on Neutrino Oscillations
 
 * **Oscillation**: the process of changing flavour identity of neutrinos ($e, \mu, \tau$) after propagation through a distance and time. Detectors measure different mixing–mass states, indicating oscillation in the mass eigenstates.
 * **Explanation**: caused by mass differences ($\Delta m^2 \neq 0 \ \Rightarrow\ m_i \neq m_j \\Rightarrow\ \text{neutrinos are massive}$
@@ -29,15 +29,7 @@ The program is fully written in Python 3, using standard modules that are availa
 * Start from the initial state $|\nu_\alpha\rangle \ \(\Psi(x, 0)\)$;  $(\alpha = e, \mu, \tau)$ to the final state $|\nu_\beta\rangle \ \(\Psi(x, t)\)$; $(\beta = e, \mu, \tau)$.
 * Apply time evolution: $\Psi(x, t) = \Psi(x, 0) \. e^{-i H t}  $.
 * Oscillation probability is given by overlap $\| \Psi(x, t) \|^2$.
-
-### Approaches
-
-1. **Mass-basis phase evolution (analytical formula)**: The neutrino state then exists as a superposition of the three mass eigenstates until it interacts and the wave function describes it collapses into weak eigenstates. Directly expand the initial state in mass basis = evolve the phase of each eigenstate. $\ \Rightarrow$ Oscillations caused by the phase difference of the eigenstates
-2. **Evolution operator (Hamiltonian)**: apply the time-evolution operator exp(-iHt) directly. $\ \Rightarrow$ Oscillations are rotations in Hilbert space caused by energy differences of the flavour states.
-
-### In Matter
-
-* Neutrinos propagating in matter interact with electrons and nucleons.
+* In matter: Neutrinos propagating in matter interact with electrons and nucleons.
 * **CC interactions** ($\nu_e + e^- \to \nu_e + e^-$) affect only electron neutrinos.
 * **NC interactions** ($\nu_i + n,p \to \nu_i + n,p$) affect all flavours equally and thus do not change oscillations.
 
