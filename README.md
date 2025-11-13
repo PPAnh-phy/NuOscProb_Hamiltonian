@@ -10,7 +10,7 @@ The program is fully written in Python 3, using standard modules that are availa
   pip install numpy scipy 
 
 ## Structure
-### Inside the Study packages file:
+### Inside the Study packages file [7][8]:
 * **PMNS**: define parameters (we used NuFit 6.0 best fit data), and compute the PMNS matrix.
 * **hamiltonian_vs_packages**: compute neutrino oscillation probability and compare between packages (NuFAST and NuExact)
 * **plot**: create plots of neutrino oscillation probability and differences between packages
