@@ -45,7 +45,8 @@ The program is fully written in Python 3, using standard modules that are availa
 
 \[3] Son Van Cao, *Study of Antineutrino Oscillation Using Accelerator and Atmospheric Data in MINOS*, DOI: 10.2172/1151746
 
-\[4] M.C. Gonzalez-Garcia, Michele Maltoni, and Thomas Schwetz, *NuFIT: Three-Flavour Global Analyses of Neutrino Oscillation Experiments*, \*\*arXiv:\*\*hep-ph/2111.03086v2 (2021)
+\[4]  Ivan Esteban, M. C. Gonzalez-Garcia, Michele Maltoni, Ivan Martinez-Soler, João Paulo Pinheiro, Thomas Schwetzh, *Updated global analysis of three-flavor
+ neutrino oscillations*, \*\*arXiv:\*\*hep-ph/2410.05380v2 (2024)
 
 \[5] Peter J. Mohr, David B. Newell, Barry N. Taylor, and Eite Tiesinga, *CODATA Recommended Values of the Fundamental Physical Constants: 2022*, \*\*arXiv:\*\*hep-ph/2409.03787v2 (2024)
 
