@@ -19,7 +19,7 @@ __email__ = "mbustamante@gmail.com"
 from numpy import *
 import numpy as np
 
-hbarc = 197.3269804e-9   
+hbarc = 197.3269804e-9   # My modification
 CONV_KM_TO_INV_EV = 1e3 / hbarc  # My modification
 #CONV_KM_TO_INV_EV = 5.06773e9
 r"""float: Module-level constant
@@ -120,11 +120,11 @@ Units: [eV]
 
 # NuFit 6.0  
 theta12 = np.radians(33.68)
-theta23 = np.radians(48.6)
-theta13 = np.radians(8.58)
+theta23 = np.radians(43.3)
+theta13 = np.radians(8.56)
 
 S12_NO_BF = np.sin(theta12)  # My modification
-#S12_NO_BF = sqrt(0.55)
+#S12_NO_BF = sqrt(0.307)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_12), best fit from NuFit 4.0, assuming
@@ -133,7 +133,7 @@ Units: [Adimensional]
 """
 
 S23_NO_BF = np.sin(theta23)  # My modification
-#S23_NO_BF = sqrt(0.69)
+#S23_NO_BF = sqrt(0.470)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_23), best fit from NuFit 4.0, assuming
@@ -142,7 +142,7 @@ Units: [Adimensional]
 """
 
 S13_NO_BF = np.sin(theta13)  # My modification
-#S13_NO_BF = sqrt(0.149)
+#S13_NO_BF = sqrt(0.02215)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_13), best fit from NuFit 4.0, assuming
@@ -151,7 +151,7 @@ Units: [Adimensional]
 """
 
 DCP_NO_BF = np.radians(212)  # My modification
-# DCP_NO_BF = 212./180.*np.pi
+#DCP_NO_BF = 212./180.*np.pi
 r"""float: Module-level constant
 
 Lepton CP-violation phase delta_CP, best fit from NuFit 4.0, assuming
@@ -159,7 +159,7 @@ normal ordering with SK atmospheric data.
 Units: [radian]
 """
 
-D21_NO_BF = 7.49e-5  # My modification
+D21_NO_BF = 7.49e-5  
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_21, best fit from NuFit 4.0, assuming
@@ -167,7 +167,7 @@ normal ordering with SK atmospheric data.
 Units: [eV^2]
 """
 
-D31_NO_BF = 2.513e-3  # My modification
+D31_NO_BF = 2.513e-3  
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_31, best fit from NuFit 4.0, assuming
@@ -175,8 +175,8 @@ normal ordering with SK atmospheric data.
 Units: [eV^2]
 """
 
-S12_IO_BF = np.sin(theta12)  # My modification
-#S12_IO_BF = np.sqrt(0.310)
+#S12_IO_BF = np.sin(theta12)  # My modification
+S12_IO_BF = np.sqrt(0.307)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_12), best fit from NuFit 4.0, assuming
@@ -184,8 +184,8 @@ inverted ordering with SK atmospheric data.
 Units: [Adimensional]
 """
 
-S23_IO_BF = np.sin(theta23)  # My modification
-#S23_IO_BF = np.sqrt(0.582)
+#S23_IO_BF = np.sin(theta23)  # My modification
+S23_IO_BF = np.sqrt(0.563)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_23), best fit from NuFit 4.0, assuming
@@ -193,8 +193,8 @@ inverted ordering with SK atmospheric data.
 Units: [Adimensional]
 """
 
-S13_IO_BF = np.sin(theta13)  # My modification
-#S13_IO_BF = np.sqrt(2.263e-2)
+#S13_IO_BF = np.sin(theta13)  # My modification
+S13_IO_BF = np.sqrt(0.02226)
 r"""float: Module-level constant
 
 Lepton mixing angle sin(theta_13), best fit from NuFit 4.0, assuming
@@ -202,8 +202,8 @@ inverted ordering with SK atmospheric data.
 Units: [Adimen0sional]
 """
 
-DCP_IO_BF = np.radians(285)  # My modification
-#DCP_IO_BF = 285./180.*np.pi
+#DCP_IO_BF = np.radians(285)  # My modification
+DCP_IO_BF = 285./180.*np.pi
 r"""float: Module-level constant
 
 Lepton CP-violation phase delta_CP, best fit from NuFit 4.0, assuming
