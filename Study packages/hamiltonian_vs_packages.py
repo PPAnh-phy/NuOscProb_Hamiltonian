@@ -13,34 +13,24 @@ Returns:
 """
 
 from PMNS import *
-
 from scipy.linalg import expm, eigh
 
-def mass_splittings(delta_m2, hierarchy="inverted"):
+def mass_splittings(delta_m2):
     dm21, dm31 = delta_m2
-    if hierarchy == "normal":
-        dm32 = dm31 - dm21
-        dm2 = [0, dm21, dm31]  # m1^2 = 0 reference
-    elif hierarchy == "inverted":
-        dm31 = -abs(dm31)      # Here dm31 is NEGATIVE (Dmsq31 = -2.484e-3 eV^2)
-        dm32 = dm31 + dm21     # shift by solar splitting
-        dm2 = [dm31, dm32, 0]  # m3^2 = 0 reference
-    else:
-        raise ValueError("Hierarchy must be 'normal' or 'inverted'.")
-    return dm2
+    return [0, dm21, dm31]
 
-def P_3nu_evolutor_expm(L, E, U, delta_m2, rho, alpha, beta, hierarchy="inverted"):
+def P_3nu_evolutor_expm(L, E, U, delta_m2, rho, alpha, beta):
     # natural unit conversion
     hbarc = 197.3269804e-9     # eV.m
     L_natural_unit = (L * 1e3) / hbarc   # eV^-1
     E_eV = E * 1e9   # eV
     # dm2 from chosen mass hierachy
-    dm2 = mass_splittings(delta_m2, hierarchy)
+    dm2 = mass_splittings(delta_m2)
     # Hamiltonian
     H_mass = np.diag([dm2[0]/(2*E_eV), dm2[1]/(2*E_eV), dm2[2]/(2*E_eV)])
     H_flavor = U @ H_mass @ U.conj().T
     # Additional potential term
-    V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV
+    V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV (natural units convertion)
     V_matter = np.diag([V, 0, 0])
     H_flavor += V_matter
     # Time evolution
@@ -57,18 +47,18 @@ def P_3nu_evolutor_expm(L, E, U, delta_m2, rho, alpha, beta, hierarchy="inverted
     
     return probability
 
-def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta, hierarchy="inverted"):
+def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta):
     # natural unit conversion
     hbarc = 197.3269804e-9     # eV.m
     L_natural_unit = (L * 1e3) / hbarc   # eV^-1
     E_eV = E * 1e9   # eV
     # dm2 from chosen mass hierachy
-    dm2 = mass_splittings(delta_m2, hierarchy)
+    dm2 = mass_splittings(delta_m2)
     # Hamiltonian
     H_mass = np.diag([dm2[0]/(2*E_eV), dm2[1]/(2*E_eV), dm2[2]/(2*E_eV)])
     H_flavor = U @ H_mass @ U.conj().T
     # Additional potential term
-    V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV
+    V = np.sqrt(2) * G_F * rho * Ye * Na * 7.645373e-33 # eV (natural units convertion)
     V_matter = np.diag([V, 0, 0])
     H_flavor += V_matter
     # Eigen-decomposition
@@ -88,11 +78,12 @@ def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta, hierarchy="inverted
     
     return probability
 
+
 # NuFast
+#eVsqkm_to_GeV_over4 = 1e-9 / 1.97327e-7 * 1e3 / 4
+#YerhoE2a = 1.52588e-4
 eVsqkm_to_GeV_over4 = (1e3 / 197.3269804e-9) / (4 * 1e9)  # My modification
 YerhoE2a = 1.51891739e-4  # My modification
-#eVsqkm_to_GeV_over4 = 1e-9 / 1.97327e-7 * 1e3 / 4
-#YerhoE2a = 1.52e-4
 # --------------------------------------------------------------------- #
 # Set the number of Newton-Raphson iterations which sets the precision. #
 # 0 is close to the single precision limit and is better than DUNE/HK   #
@@ -256,7 +247,7 @@ def Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp, Dmsq21, Dmsq31, L, E, 
     probs_mm = Pmm
     probs_mt = 1 - probs_me - Pmm
 
-    return probs_me    
+    return probs_ee    
 
 def Probability_Vacuum_LBL(s12sq, s13sq, s23sq, delta, Dmsq21, Dmsq31, L, E):
     # --------------------------------------------------------------------- #
@@ -349,7 +340,7 @@ def Probability_Vacuum_LBL(s12sq, s13sq, s23sq, delta, Dmsq21, Dmsq31, L, E):
     probs_mm = Pmm
     probs_mt = 1 - probs_me - Pmm
 
-    return probs_me
+    return probs_ee
 
 ### NuExact
 import sys
@@ -372,7 +363,7 @@ def oscprob_nuexact_vacuum(L, E, delta_m21_sq, delta_m31_sq, U):
     Pee, Pem, Pet, Pme, Pmm, Pmt, Pte, Ptm, Ptt = \
             oscprob3nu.probabilities_3nu(h_vacuum, L*CONV_KM_TO_INV_EV)
 
-    return Pme
+    return Pee
 
 def oscprob_nuexact_matter(L, E, delta_m21_sq, delta_m31_sq, U):
     h_vacuum_energy_indep = \
@@ -391,7 +382,7 @@ def oscprob_nuexact_matter(L, E, delta_m21_sq, delta_m31_sq, U):
     Pee, Pem, Pet, Pme, Pmm, Pmt, Pte, Ptm, Ptt = \
         oscprob3nu.probabilities_3nu(h_matter, L*CONV_KM_TO_INV_EV)
 
-    return Pme
+    return Pee
 
 # Analytical formula for Pee_JUNO
 #def Pee_analytical(L, E, theta12, theta13, Dmsq21, Dmsq31):
@@ -412,8 +403,8 @@ def oscprob_nuexact_matter(L, E, delta_m21_sq, delta_m31_sq, U):
     return 1 - term21 - term31 - term32
 
 
-P_hamiltonian_expm = np.array([P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0) for E in E_range])
-P_hamiltonian_eigh = np.array([P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 1, 0) for E in E_range])
+P_hamiltonian_expm = np.array([P_3nu_evolutor_expm(L, E, U, [Dmsq21, Dmsq31], rho, 0, 0) for E in E_range])
+P_hamiltonian_eigh = np.array([P_3nu_evolutor_eigh(L, E, U, [Dmsq21, Dmsq31], rho, 0, 0) for E in E_range])
 
 P_nufast_matter = np.array([Probability_Matter_LBL(s12sq, s13sq, s23sq, delta_cp, Dmsq21, Dmsq31, L, E, rho, Ye, N_Newton) for E in E_range])
 P_nufast_vacuum = np.array([Probability_Vacuum_LBL(s12sq, s13sq, s23sq, delta_cp, Dmsq21, Dmsq31, L, E) for E in E_range])
