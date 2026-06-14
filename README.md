@@ -1,21 +1,21 @@
 # NuOscProb_Hamiltonian
 
-For the purpose of serving ongoing and underdeveloped experiments such as JUNO, DUNE, Hyper-K, etc, which require an accurate and efficient computational tool for precise measurements, we examined the Hamiltonian approach to compute neutrino oscillation probability. This study benchmarks and optimises computational approaches for a wide range of problems in medium- to long-baseline neutrino experiments.  Mass ordering and constant matter effect are taken into account. The results highlight the importance of precise treatment of the conversion parameters and trade-offs between precision and efficiency, providing practical guidelines for selecting computational strategies in neutrino oscillation simulations, and contributing to optimised analyses for current and future experiments.
+For the purpose of serving ongoing and underdeveloped experiments such as JUNO, DUNE, Hyper-K, etc., which require an accurate and efficient computational tool for precise measurements of neutrino oscillations, we examined the Hamiltonian approach for computing neutrino oscillation probabilities. We benchmark and optimise computational approaches for medium- to long-baseline neutrino experiments.  Mass ordering and constant matter effect are taken into account. The results highlight the importance of precise treatment of the PMNS and conversion parameters, and provide practical guidelines for selecting computational strategies in neutrino oscillation simulations, contributing to optimised analyses for current and future experiments.
 
 ### Requirements
-The program is fully written in Python 3, using standard modules that are available on most Python installations.
+The program is fully written in Python, using standard modules that are available on most Python installations.
 - Python 3.8 or newer (tested with Python 3.11.4)
 - Install dependencies:
   ```bash
   pip install numpy scipy 
 
 ## Structure
-### Inside the Study packages file [7][8]:
+### Inside the "Study packages" file [7][8]:
 * **PMNS**: define parameters (we used NuFit 6.0 best fit data), and compute the PMNS matrix.
-* **hamiltonian_vs_packages**: compute neutrino oscillation probability and compare between packages (NuFAST and NuExact)
-* **plot**: create plots of neutrino oscillation probability and differences between packages
-* **running_time**: compute running time between packages 
-* **Myglobaldefs**: my modified parameters for more precise results of NuExact packages (modifications used for NuFAST are already included in the file 'hamiltonian_vs_packages')
+* **hamiltonian_vs_packages**: compute neutrino oscillation probabilities and benchmark between packages (NuFast and NuOscProbExact)
+* **plot**: plotted representation of neutrino oscillation probabilities and differences between packages
+* **running_time**: compute running time between packages on our local computer
+* **Myglobaldefs**: our modified parameters for benchmarking NuOscProbExact package (modifications used for NuFast are already included in the file 'hamiltonian_vs_packages')
 ---
 
 ### Notes on Neutrino Oscillations
