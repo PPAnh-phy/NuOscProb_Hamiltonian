@@ -15,6 +15,7 @@ Returns:
 from PMNS import *
 from scipy.linalg import expm, eigh
 
+# Relabeling is not necessary
 def mass_splittings(delta_m2):
     dm21, dm31 = delta_m2
     return [0, dm21, dm31]
@@ -24,7 +25,6 @@ def P_3nu_evolutor_expm(L, E, U, delta_m2, rho, alpha, beta):
     hbarc = 197.3269804e-9     # eV.m
     L_natural_unit = (L * 1e3) / hbarc   # eV^-1
     E_eV = E * 1e9   # eV
-    # dm2 from chosen mass hierachy
     dm2 = mass_splittings(delta_m2)
     # Hamiltonian
     H_mass = np.diag([dm2[0]/(2*E_eV), dm2[1]/(2*E_eV), dm2[2]/(2*E_eV)])
@@ -52,7 +52,6 @@ def P_3nu_evolutor_eigh(L, E, U, delta_m2, rho, alpha, beta):
     hbarc = 197.3269804e-9     # eV.m
     L_natural_unit = (L * 1e3) / hbarc   # eV^-1
     E_eV = E * 1e9   # eV
-    # dm2 from chosen mass hierachy
     dm2 = mass_splittings(delta_m2)
     # Hamiltonian
     H_mass = np.diag([dm2[0]/(2*E_eV), dm2[1]/(2*E_eV), dm2[2]/(2*E_eV)])
@@ -90,7 +89,7 @@ YerhoE2a = 1.51891739e-4  # My modification
 # in the high statistics regime. Increasing N_Newton to 1,2,... rapidly #
 # improves the precision at a modest computational cost                 #
 # --------------------------------------------------------------------- #
-N_Newton = 0
+N_Newton = 2
 
 #s12sq = 0.30
 #s13sq = 0.022
