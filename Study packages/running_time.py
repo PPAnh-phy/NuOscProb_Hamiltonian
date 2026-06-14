@@ -2,9 +2,7 @@ from PMNS import *
 from hamiltonian_vs_packages import *
 import matplotlib.pyplot as plt
 import time
-# -----------------------------------
-# User parameters
-# ----------------------------------- 
+
 N_eval = len(E_range)       
 N_repeat = 50                 # number of repeated runs for statistics
 methods = ["expm", "eigh", "NuFast", "NuExact"]
@@ -14,9 +12,6 @@ times_eigh = []
 times_nufast = []
 times_nuexact = []
 
-# -----------------------------------
-# Benchmark loop
-# -----------------------------------
 for i in range(N_repeat):
     # Hamiltonian (expm)
     t0 = time.time()
@@ -51,9 +46,6 @@ for i in range(N_repeat):
     dt = t1 - t0
     times_nuexact.append(dt)
 
-# -----------------------------------
-# Statistics
-# -----------------------------------
 def summarize(times):
     return np.mean(times), np.std(times), np.min(times), np.max(times)
 
@@ -68,9 +60,6 @@ print(f"Hamiltonian (eigh):  mean={mean_eigh:.4f}s ±{std_eigh:.4f}  [min={min_e
 print(f"NuFast:              mean={mean_nufast:.4f}s ±{std_nufast:.4f}  [min={min_nufast:.4f}, max={max_nufast:.4f}]")
 print(f"NuExact:             mean={mean_nuexact:.4f}s ±{std_nuexact:.4f}  [min={min_nuexact:.4f}, max={max_nuexact:.4f}]")
 
-# -----------------------------------
-# Visualization
-# -----------------------------------
 means = [mean_expm, mean_eigh, mean_nufast, mean_nuexact]
 stds = [std_expm, std_eigh, std_nufast, std_nuexact]
 
