@@ -99,7 +99,7 @@ Average matter density in the Earth's crust.
 Units: [g cm^{-3}]
 """
 
-Na = 6.02214076e23     # mol^-1  # My modification
+Na = 6.02214076e23     # mol^-1  
 NUM_DENSITY_E_EARTH_CRUST = DENSITY_MATTER_CRUST_G_PER_CM3 * ELECTRON_FRACTION_EARTH_CRUST * Na * 7.645373e-33   # eV  # My modification
 #NUM_DENSITY_E_EARTH_CRUST = DENSITY_MATTER_CRUST_G_PER_CM3 * CONV_G_TO_EV \
 #                            / ((MASS_PROTON+MASS_NEUTRON)/2.0) \
@@ -118,7 +118,9 @@ Charged-current matter potential in the Earth's crust.
 Units: [eV]
 """
 
-# NuFit 6.0  
+# NuFit 6.0 best-fit
+# modify for normal ordering: theta12 = 33.68; theta23 = 43.3; theta13 = 8.56 [deg]
+# modify for inverted ordering: theta12 = 33.68; theta23 = 48.6; theta13 = 8.58 [deg]
 theta12 = np.radians(33.68)
 theta23 = np.radians(43.3)
 theta13 = np.radians(8.56)
@@ -159,7 +161,7 @@ normal ordering with SK atmospheric data.
 Units: [radian]
 """
 
-D21_NO_BF = 7.49e-5  
+D21_NO_BF = 7.49e-5  # NuFit 6.0
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_21, best fit from NuFit 4.0, assuming
@@ -167,7 +169,7 @@ normal ordering with SK atmospheric data.
 Units: [eV^2]
 """
 
-D31_NO_BF = 2.513e-3  
+D31_NO_BF = 2.513e-3  # NuFit 6.0
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_31, best fit from NuFit 4.0, assuming
@@ -211,7 +213,7 @@ inverted ordering with SK atmospheric data.
 Units: [radian]
 """
 
-D21_IO_BF = 7.49e-5
+D21_IO_BF = 7.49e-5  #NuFit
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_21, best fit from NuFit 4.0, assuming
@@ -219,7 +221,7 @@ normal ordering with SK atmospheric data.
 Units: [eV^2]
 """
 
-D32_IO_BF = -2.5849e-3
+D32_IO_BF = -2.5849e-3  #NuFit
 r"""float: Module-level constant
 
 Mass-squared difference Delta m^2_32, best fit from NuFit 4.0, assuming
